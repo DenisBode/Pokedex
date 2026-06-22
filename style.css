@@ -1,0 +1,22 @@
+/* Headerbereich */
+
+header {
+    height: 80px;
+    background-color: #1f1f1f;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+header h1 {
+    color: white;
+    font-size: 32px;
+    font-weight: 700;
+}
+
+.header-logo {
+    height: 48px;
+    width: auto;
+}
+
