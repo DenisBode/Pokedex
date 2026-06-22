@@ -45,3 +45,11 @@ function renderPokemonCard(pokemon) {
 
     console.log("Pokemon-Karte wurde eingefügt");
 }
+
+/**
+ * Ich nutze diese Funktion erstmal nur als Test.
+ * Später öffnet sie die große Pokémon-Ansicht.
+ */
+function openPokemonDialog(pokemonId) {
+    console.log("Clicked Pokémon ID:", pokemonId);
+}
