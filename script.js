@@ -19,7 +19,7 @@ function init() {
 
 
 /**
- * Lädt eine Liste mit Pokémon.
+ * Lädt eine Liste mit Pokemon.
  */
 async function loadPokemonList() {
     console.log("Lädt Pokémon ab Offset:", currentOffset);
@@ -34,7 +34,7 @@ async function loadPokemonList() {
 
 
 /**
- * Baut die URL für die Pokémon-Liste.
+ * Baut die URL für die Pokemon-Liste.
  */
 function getPokemonListUrl() {
     return BASE_URL + `pokemon?limit=${pokemonLimit}&offset=${currentOffset}`;
@@ -42,7 +42,7 @@ function getPokemonListUrl() {
 
 
 /**
- * Lädt die Detaildaten zu jedem Pokémon aus der Liste.
+ * Lädt die Detaildaten zu jedem Pokemon aus der Liste.
  */
 async function loadPokemonDetails(pokemonList) {
     for (let i = 0; i < pokemonList.length; i++) {
@@ -54,7 +54,7 @@ async function loadPokemonDetails(pokemonList) {
 
 
 /**
- * Lädt ein einzelnes Pokémon mit allen Details.
+ * Lädt ein einzelnes Pokemon mit allen Details.
  */
 async function loadSinglePokemon(url) {
     let response = await fetch(url);
@@ -69,7 +69,7 @@ async function loadSinglePokemon(url) {
 
 
 /**
- * Rendert eine einzelne Pokémon-Karte.
+ * Rendert eine einzelne Pokemon-Karte.
  */
 function renderPokemonCard(pokemon) {
     let pokedex = document.getElementById("pokedex");
@@ -79,7 +79,7 @@ function renderPokemonCard(pokemon) {
 
 
 /**
- * Rendert mehrere Pokémon-Karten neu.
+ * Rendert mehrere Pokemon-Karten neu.
  */
 function renderPokemonCards(pokemonList) {
     let pokedex = document.getElementById("pokedex");
@@ -164,7 +164,7 @@ function updateTypeFilter() {
 
 
 /**
- * Rendert nur passende Pokémon.
+ * Rendert nur passende Pokemon.
  */
 function renderFilteredPokemon() {
     if (selectedTypes.length === 0) {
@@ -190,7 +190,7 @@ function hasSelectedType(pokemon) {
 
 
 /**
- * Holt alle Typ-Namen eines Pokémon.
+ * Holt alle Typ-Namen eines Pokemon.
  */
 function getPokemonTypeNames(pokemon) {
     return pokemon.types.map(typeSlot => typeSlot.type.name);
