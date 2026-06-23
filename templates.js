@@ -42,3 +42,15 @@ function getPokemonTypeTemplate(typeName) {
 function capitalizeFirstLetter(text) {
     return text.charAt(0).toUpperCase() + text.slice(1);
 }
+
+function getTypeFilterButtonTemplate(typeName) {
+    return `
+        <button 
+            class="type-filter-button type-${typeName}" 
+            data-type="${typeName}"
+            onclick="toggleTypeFilter('${typeName}')"
+        >
+            ${capitalizeFirstLetter(typeName)}
+        </button>
+    `;
+}

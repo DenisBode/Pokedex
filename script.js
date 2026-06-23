@@ -2,77 +2,48 @@ const BASE_URL = "https://pokeapi.co/api/v2/";
 
 let currentOffset = 0;
 let pokemonLimit = 20;
+let loadedPokemon = [];
+let selectedTypes = [];
+
 
 /**
- * Startfunktion der Anwendung.
- * Wird über onload="init()" in der index.html gestartet.
+ * Startet die App.
+ * Wird über onload="init()" in der index.html aufgerufen.
  */
 function init() {
     console.log("App gestartet");
 
+    loadPokemonTypes();
     loadPokemonList();
 }
 
-/**
- * Lädt ein einzelnes Pokemon von der PokeAPI.
- * Aktuell wird Pokémon mit der ID 1 geladen.
- */
-async function loadPokemon() {
-    console.log("Lade Pokémon-Daten...");
-
-    let response = await fetch(BASE_URL + "pokemon/1");
-
-    console.log("Antwort vom Server:", response);
-
-    let pokemon = await response.json();
-
-    console.log("Umgewandelte Pokémon-Daten:", pokemon);
-    console.log("Geladenes Pokémon:", pokemon.name);
-    console.log("Pokémon-ID:", pokemon.id);
-
-    renderPokemonCard(pokemon);
-}
 
 /**
- * Rendert eine einzelne Pokemon-Karte in den Pokédex-Container.
+ * Lädt eine Liste mit Pokémon.
  */
-function renderPokemonCard(pokemon) {
-    console.log("Rendere Pokemon-Karte für:", pokemon.name);
-
-    let pokedex = document.getElementById("pokedex");
-
-    console.log("Gefundener Pokedex-Container:", pokedex);
-
-    pokedex.innerHTML += getPokemonCardTemplate(pokemon);
-
-    console.log("Pokemon-Karte wurde eingefügt");
-}
-
-/**
- * Ich nutze diese Funktion erstmal nur als Test.
- * Später öffnet sie die große Pokémon-Ansicht.
- */
-function openPokemonDialog(pokemonId) {
-    console.log("Clicked Pokémon ID:", pokemonId);
-}
-
 async function loadPokemonList() {
-    console.log("Lädt Pokemon von ", currentOffset);
-
+    console.log("Lädt Pokémon ab Offset:", currentOffset);
 
     let response = await fetch(getPokemonListUrl());
     let data = await response.json();
 
-    console.log(data.results);
+    console.log("Geladene Pokémon-Liste:", data.results);
 
     loadPokemonDetails(data.results);
-
 }
 
+
+/**
+ * Baut die URL für die Pokémon-Liste.
+ */
 function getPokemonListUrl() {
     return BASE_URL + `pokemon?limit=${pokemonLimit}&offset=${currentOffset}`;
 }
 
+
+/**
+ * Lädt die Detaildaten zu jedem Pokémon aus der Liste.
+ */
 async function loadPokemonDetails(pokemonList) {
     for (let i = 0; i < pokemonList.length; i++) {
         await loadSinglePokemon(pokemonList[i].url);
@@ -81,20 +52,176 @@ async function loadPokemonDetails(pokemonList) {
     currentOffset += pokemonLimit;
 }
 
+
+/**
+ * Lädt ein einzelnes Pokémon mit allen Details.
+ */
 async function loadSinglePokemon(url) {
     let response = await fetch(url);
     let pokemon = await response.json();
 
-    console.log("Loaded Pokémon:", pokemon.name);
+    loadedPokemon.push(pokemon);
+
+    console.log("Geladenes Pokémon:", pokemon.name);
 
     renderPokemonCard(pokemon);
 }
 
+
+/**
+ * Rendert eine einzelne Pokémon-Karte.
+ */
 function renderPokemonCard(pokemon) {
     let pokedex = document.getElementById("pokedex");
+
     pokedex.innerHTML += getPokemonCardTemplate(pokemon);
 }
 
+
+/**
+ * Rendert mehrere Pokémon-Karten neu.
+ */
+function renderPokemonCards(pokemonList) {
+    let pokedex = document.getElementById("pokedex");
+
+    pokedex.innerHTML = "";
+
+    for (let i = 0; i < pokemonList.length; i++) {
+        renderPokemonCard(pokemonList[i]);
+    }
+}
+
+
+/**
+ * Lädt alle Pokémon-Typen für den Filter.
+ */
+async function loadPokemonTypes() {
+    let response = await fetch(BASE_URL + "type");
+    let data = await response.json();
+    let types = getValidTypes(data.results);
+
+    console.log("Verfügbare Typen:", types);
+
+    renderTypeFilter(types);
+}
+
+
+/**
+ * Entfernt Typen, die wir nicht brauchen.
+ */
+function getValidTypes(types) {
+    return types.filter(type =>
+        type.name !== "unknown" && type.name !== "shadow"
+    );
+}
+
+
+/**
+ * Rendert die Filter-Buttons.
+ */
+function renderTypeFilter(types) {
+    let typeFilter = document.getElementById("typeFilter");
+
+    typeFilter.innerHTML = "";
+
+    for (let i = 0; i < types.length; i++) {
+        typeFilter.innerHTML += getTypeFilterButtonTemplate(types[i].name);
+    }
+}
+
+
+/**
+ * Aktiviert oder deaktiviert einen Typ-Filter.
+ */
+function toggleTypeFilter(typeName) {
+    if (selectedTypes.includes(typeName)) {
+        removeSelectedType(typeName);
+    } else {
+        selectedTypes.push(typeName);
+    }
+
+    updateTypeFilter();
+}
+
+
+/**
+ * Entfernt einen aktiven Typ aus dem Filter.
+ */
+function removeSelectedType(typeName) {
+    selectedTypes = selectedTypes.filter(type => type !== typeName);
+}
+
+
+/**
+ * Aktualisiert Filter-Buttons und Pokémon-Anzeige.
+ */
+function updateTypeFilter() {
+    updateTypeButtonStyles();
+    renderFilteredPokemon();
+
+    console.log("Aktive Typen:", selectedTypes);
+}
+
+
+/**
+ * Rendert nur passende Pokémon.
+ */
+function renderFilteredPokemon() {
+    if (selectedTypes.length === 0) {
+        renderPokemonCards(loadedPokemon);
+        return;
+    }
+
+    let filteredPokemon = loadedPokemon.filter(hasSelectedType);
+    renderPokemonCards(filteredPokemon);
+}
+
+
+/**
+ * Prüft, ob ein Pokémon einen aktiven Typ besitzt.
+ */
+function hasSelectedType(pokemon) {
+    let pokemonTypes = getPokemonTypeNames(pokemon);
+
+    return selectedTypes.some(type =>
+        pokemonTypes.includes(type)
+    );
+}
+
+
+/**
+ * Holt alle Typ-Namen eines Pokémon.
+ */
+function getPokemonTypeNames(pokemon) {
+    return pokemon.types.map(typeSlot => typeSlot.type.name);
+}
+
+
+/**
+ * Aktualisiert alle Filter-Button-Styles.
+ */
+function updateTypeButtonStyles() {
+    let buttons = document.querySelectorAll(".type-filter-button");
+
+    for (let i = 0; i < buttons.length; i++) {
+        updateSingleTypeButton(buttons[i]);
+    }
+}
+
+
+/**
+ * Setzt active auf einen einzelnen Button.
+ */
+function updateSingleTypeButton(button) {
+    let typeName = button.dataset.type;
+
+    button.classList.toggle("active", selectedTypes.includes(typeName));
+}
+
+
+/**
+ * Platzhalter für die spätere große Ansicht.
+ */
 function openPokemonDialog(pokemonId) {
     console.log("Clicked Pokémon ID:", pokemonId);
 }
