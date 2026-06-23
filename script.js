@@ -1,14 +1,16 @@
 const BASE_URL = "https://pokeapi.co/api/v2/";
 
+let currentOffset = 0;
+let pokemonLimit = 20;
+
 /**
  * Startfunktion der Anwendung.
  * Wird über onload="init()" in der index.html gestartet.
  */
 function init() {
     console.log("App gestartet");
-    console.log("API Basis-URL:", BASE_URL);
 
-    loadPokemon();
+    loadPokemonList();
 }
 
 /**
@@ -50,6 +52,49 @@ function renderPokemonCard(pokemon) {
  * Ich nutze diese Funktion erstmal nur als Test.
  * Später öffnet sie die große Pokémon-Ansicht.
  */
+function openPokemonDialog(pokemonId) {
+    console.log("Clicked Pokémon ID:", pokemonId);
+}
+
+async function loadPokemonList() {
+    console.log("Lädt Pokemon von ", currentOffset);
+
+
+    let response = await fetch(getPokemonListUrl());
+    let data = await response.json();
+
+    console.log(data.results);
+
+    loadPokemonDetails(data.results);
+
+}
+
+function getPokemonListUrl() {
+    return BASE_URL + `pokemon?limit=${pokemonLimit}&offset=${currentOffset}`;
+}
+
+async function loadPokemonDetails(pokemonList) {
+    for (let i = 0; i < pokemonList.length; i++) {
+        await loadSinglePokemon(pokemonList[i].url);
+    }
+
+    currentOffset += pokemonLimit;
+}
+
+async function loadSinglePokemon(url) {
+    let response = await fetch(url);
+    let pokemon = await response.json();
+
+    console.log("Loaded Pokémon:", pokemon.name);
+
+    renderPokemonCard(pokemon);
+}
+
+function renderPokemonCard(pokemon) {
+    let pokedex = document.getElementById("pokedex");
+    pokedex.innerHTML += getPokemonCardTemplate(pokemon);
+}
+
 function openPokemonDialog(pokemonId) {
     console.log("Clicked Pokémon ID:", pokemonId);
 }

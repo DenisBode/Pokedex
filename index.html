@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="./style.css">
     <link rel="stylesheet" href="./styles/standard.css">
     <link rel="stylesheet" href="./styles/pokemon-card.css">
+    <link rel="stylesheet" href="./styles/pokemon-types.css">
 </head>
 
 <body onload="init()">
@@ -23,14 +24,17 @@
                 Search
             </button>
         </div>
+        <div id="typeFilter" class="type-filter"></div>
     </header>
 
     <main data-id="content">
         <section id="pokedex"></section>
 
-        <button data-id="load-more-button" id="loadMoreButton">
-            Load more
-        </button>
+        <div class="load-more-wrapper">
+            <button data-id="load-more-button" id="loadMoreButton">
+                Load more
+            </button>
+        </div>
     </main>
 
     <dialog data-id="dialog" id="pokemonDialog"></dialog>
