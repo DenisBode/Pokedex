@@ -1,10 +1,10 @@
 #pokedex {
     display: flex;
-    flex-wrap: wrap;
     justify-content: center;
+    flex-wrap: wrap;
     gap: 24px;
 
-    padding: 40px 24px;
+    padding: 48px 24px;
 }
 
 .pokemon-card {
@@ -43,4 +43,11 @@
 
 .pokemon-card p {
     font-size: 16px;
+}
+
+.load-more-wrapper {
+    display: flex;
+    justify-content: center;
+
+    padding: 24px;
 }
