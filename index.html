@@ -1,12 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pokédex</title>
+    <title>PokÃ©dex</title>
     <link rel="icon" href="./assets/pokeball.svg" type="image/svg+xml">
-
     <link rel="stylesheet" href="./style.css">
     <link rel="stylesheet" href="./styles/standard.css">
     <link rel="stylesheet" href="./styles/pokemon-card.css">
@@ -14,59 +12,47 @@
     <link rel="stylesheet" href="./styles/type-filter.css">
     <link rel="stylesheet" href="./styles/responsive.css">
 </head>
-
 <body onload="init()">
-
     <header>
         <div class="header-title">
-            <img class="header-logo" src="./assets/pokeball.svg" alt="Pokédex logo">
-            <h1>Pokédex</h1>
+            <img class="header-logo" src="./assets/pokeball.svg" alt="PokÃ©dex logo">
+            <h1>PokÃ©dex</h1>
         </div>
-
         <div class="search-wrapper">
             <div class="search-field">
-                <input data-id="search-input" id="searchInput" type="text" placeholder="Search Pokémon...">
-
+                <input data-id="search-input" id="searchInput" type="text" placeholder="Search PokÃ©mon...">
                 <button id="clearSearchButton" class="clear-search-button" type="button" aria-label="Clear search">
                     x
                 </button>
             </div>
-
             <button data-id="search-button" id="searchButton" type="button">
                 Search
             </button>
         </div>
         <div id="typeFilter" class="type-filter"></div>
     </header>
-
     <main data-id="content">
         <section id="pokedex"></section>
-
         <div class="load-more-wrapper">
             <button data-id="load-more-button" id="loadMoreButton" type="button">
                 Load more
             </button>
         </div>
     </main>
-
     <footer class="site-footer">
         <div class="site-footer-content">
             <a class="footer-brand" href="./index.html">
                 <img src="./assets/pokeball.svg" alt="Pokedex logo">
                 <span>Pokedex</span>
             </a>
-
             <nav class="footer-links" aria-label="Legal links">
                 <a href="./legal/impressum.html">Legal Notice</a>
                 <a href="./legal/datenschutz.html">Privacy Policy</a>
             </nav>
         </div>
     </footer>
-
     <dialog data-id="dialog" id="pokemonDialog"></dialog>
-
     <script src="./templates.js"></script>
     <script src="./script.js"></script>
 </body>
-
 </html>

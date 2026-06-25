@@ -1,6 +1,5 @@
-function getPokemonCardTemplate(pokemon) {
+﻿function getPokemonCardTemplate(pokemon) {
     let mainType = pokemon.types[0].type.name;
-
     return `
         <button class="pokemon-card type-${mainType}" data-id="card" onclick="openPokemonDialog(${pokemon.id})">
             <h2>${capitalizeFirstLetter(pokemon.name)}</h2>
@@ -9,13 +8,11 @@ function getPokemonCardTemplate(pokemon) {
         </button>
     `;
 }
-
 function getPokemonCardImageTemplate(pokemon) {
     return `
         <img data-id="card-image" src="${pokemon.sprites.front_default}" alt="${pokemon.name}">
     `;
 }
-
 function getPokemonCardTypesTemplate(pokemon) {
     return `
         <div class="pokemon-types">
@@ -23,17 +20,13 @@ function getPokemonCardTypesTemplate(pokemon) {
         </div>
     `;
 }
-
 function getPokemonTypesTemplate(types) {
     let typesHtml = "";
-
     for (let i = 0; i < types.length; i++) {
         typesHtml += getPokemonTypeTemplate(types[i].type.name);
     }
-
     return typesHtml;
 }
-
 function getPokemonTypeTemplate(typeName) {
     return `
         <span class="pokemon-type-badge type-${typeName}">
@@ -41,19 +34,15 @@ function getPokemonTypeTemplate(typeName) {
         </span>
     `;
 }
-
-
 function capitalizeFirstLetter(text) {
     return text.charAt(0).toUpperCase() + text.slice(1);
 }
-
 function capitalizeWords(text) {
     return text
         .split("-")
         .map(word => capitalizeFirstLetter(word))
         .join(" ");
 }
-
 function getTypeFilterButtonTemplate(typeName) {
     return `
         <button 
@@ -65,18 +54,15 @@ function getTypeFilterButtonTemplate(typeName) {
         </button>
     `;
 }
-
 function getNotFoundTemplate() {
     return `
         <p class="not-found" data-id="not-found">
-            No matching Pokémon found.
+            No matching PokÃ©mon found.
         </p>
     `;
 }
-
 function getPokemonDetailCardTemplate(pokemon, activeTab = "about", evolutionNames = []) {
     let mainType = pokemon.types[0].type.name;
-
     return `
         <article class="pokemon-detail-card type-${mainType}" data-id="overlay-pokemon-name">
             ${getPokemonDialogButtonsTemplate()}
@@ -87,24 +73,20 @@ function getPokemonDetailCardTemplate(pokemon, activeTab = "about", evolutionNam
         </article>
     `;
 }
-
 function getPokemonDetailImageUrl(pokemon) {
     return pokemon.sprites.other["official-artwork"].front_default || pokemon.sprites.front_default;
 }
-
 function getPokemonDialogButtonsTemplate() {
     return `
         ${getPokemonCloseButtonTemplate()}
         ${getPokemonDialogNavTemplate()}
     `;
 }
-
 function getPokemonCloseButtonTemplate() {
     return `
         <button class="pokemon-detail-close" data-id="close-dialog-button" onclick="closePokemonDialog()">x</button>
     `;
 }
-
 function getPokemonDialogNavTemplate() {
     return `
         <div class="dialog-nav">
@@ -113,13 +95,11 @@ function getPokemonDialogNavTemplate() {
         </div>
     `;
 }
-
 function getPokemonDialogNavButtonTemplate(direction, action, label) {
     return `
         <button class="dialog-nav-button dialog-nav-${direction}" data-id="${direction}-button" onclick="${action}">${label}</button>
     `;
 }
-
 function getPokemonDetailHeaderTemplate(pokemon) {
     return `
         <div class="pokemon-detail-header">
@@ -128,13 +108,11 @@ function getPokemonDetailHeaderTemplate(pokemon) {
         </div>
     `;
 }
-
 function getPokemonDetailImageTemplate(pokemon) {
     return `
         <img class="pokemon-detail-image" data-id="dialog-image" src="${getPokemonDetailImageUrl(pokemon)}" alt="${pokemon.name}" loading="eager">
     `;
 }
-
 function getPokemonDetailTabsTemplate(pokemon, activeTab) {
     return `
         <div class="detail-tabs">
@@ -145,7 +123,6 @@ function getPokemonDetailTabsTemplate(pokemon, activeTab) {
         </div>
     `;
 }
-
 function getDetailTabButtonTemplate(pokemonId, tabName, activeTab) {
     return `
         <button class="detail-tab ${getActiveTabClass(tabName, activeTab)}" onclick="switchDetailTab(${pokemonId}, '${tabName}')">
@@ -153,30 +130,24 @@ function getDetailTabButtonTemplate(pokemonId, tabName, activeTab) {
         </button>
     `;
 }
-
 function getActiveTabClass(tabName, activeTab) {
     return tabName === activeTab ? "active" : "";
 }
-
 function getPokemonDetailContentTemplate(pokemon, activeTab, evolutionNames) {
     if (activeTab === "evolution") {
         return getPokemonEvolutionTemplate(evolutionNames);
     }
-
     if (activeTab === "moves") {
         return getPokemonMovesTemplate(pokemon);
     }
-
     return activeTab === "base-stats" ? getPokemonStatsSectionTemplate(pokemon) : getPokemonAboutTemplate(pokemon);
 }
-
 function getPokemonAboutTemplate(pokemon) {
     return `
         ${getPokemonDetailFactsTemplate(pokemon)}
         ${getPokemonAbilitiesSectionTemplate(pokemon)}
     `;
 }
-
 function getPokemonDetailFactsTemplate(pokemon) {
     return `
         <div class="pokemon-detail-info">
@@ -185,7 +156,6 @@ function getPokemonDetailFactsTemplate(pokemon) {
         </div>
     `;
 }
-
 function getPokemonAbilitiesSectionTemplate(pokemon) {
     return `
         <section class="pokemon-detail-section">
@@ -194,7 +164,6 @@ function getPokemonAbilitiesSectionTemplate(pokemon) {
         </section>
     `;
 }
-
 function getPokemonStatsSectionTemplate(pokemon) {
     return `
         <section class="pokemon-detail-section">
@@ -203,7 +172,6 @@ function getPokemonStatsSectionTemplate(pokemon) {
         </section>
     `;
 }
-
 function getPokemonDetailInfoTemplate(label, value) {
     return `
         <div>
@@ -212,18 +180,15 @@ function getPokemonDetailInfoTemplate(label, value) {
         </div>
     `;
 }
-
 function getPokemonAbilitiesTemplate(abilities) {
     return abilities
         .map(ability => capitalizeWords(ability.ability.name))
         .join(", ");
 }
-
 function getPokemonEvolutionTemplate(evolutionNames) {
     if (evolutionNames.length === 0) {
         return getDetailLoadingTemplate();
     }
-
     return `
         <section class="pokemon-detail-section">
             <h3>Evolution</h3>
@@ -231,7 +196,6 @@ function getPokemonEvolutionTemplate(evolutionNames) {
         </section>
     `;
 }
-
 function getDetailLoadingTemplate() {
     return `
         <section class="pokemon-detail-section detail-loading">
@@ -240,17 +204,13 @@ function getDetailLoadingTemplate() {
         </section>
     `;
 }
-
 function getEvolutionItemsTemplate(evolutionNames) {
     let evolutionHtml = "";
-
     for (let i = 0; i < evolutionNames.length; i++) {
         evolutionHtml += getEvolutionItemTemplate(evolutionNames[i], i);
     }
-
     return evolutionHtml;
 }
-
 function getEvolutionItemTemplate(name, index) {
     return `
         <div class="evolution-item">
@@ -259,7 +219,6 @@ function getEvolutionItemTemplate(name, index) {
         </div>
     `;
 }
-
 function getPokemonMovesTemplate(pokemon) {
     return `
         <section class="pokemon-detail-section">
@@ -268,17 +227,13 @@ function getPokemonMovesTemplate(pokemon) {
         </section>
     `;
 }
-
 function getMoveItemsTemplate(moves) {
     let movesHtml = "";
-
     for (let i = 0; i < Math.min(moves.length, 12); i++) {
         movesHtml += getMoveItemTemplate(moves[i], i);
     }
-
     return movesHtml;
 }
-
 function getMoveItemTemplate(moveSlot, index) {
     return `
         <div class="move-item">
@@ -287,17 +242,13 @@ function getMoveItemTemplate(moveSlot, index) {
         </div>
     `;
 }
-
 function getPokemonStatsTemplate(stats) {
     let statsHtml = "";
-
     for (let i = 0; i < stats.length; i++) {
         statsHtml += getPokemonStatTemplate(stats[i]);
     }
-
     return statsHtml;
 }
-
 function getPokemonStatTemplate(stat) {
     return `
         <div class="pokemon-stat">
@@ -309,7 +260,6 @@ function getPokemonStatTemplate(stat) {
         </div>
     `;
 }
-
 function getPokemonStatBarTemplate(stat) {
     return `
         <div class="pokemon-stat-fill" style="width: ${getStatBarPercent(stat)}%"></div>

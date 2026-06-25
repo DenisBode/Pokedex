@@ -1,105 +1,82 @@
-.type-normal {
+﻿.type-normal {
     background-color: #a8a77a;
 }
-
 .type-fire {
     background-color: #ee8130;
 }
-
 .type-water {
     background-color: #6390f0;
 }
-
 .type-electric {
     background-color: #f7d02c;
     color: #222;
 }
-
 .type-grass {
     background-color: #7ac74c;
 }
-
 .type-ice {
     background-color: #96d9d6;
     color: #222;
 }
-
 .type-fighting {
     background-color: #c22e28;
 }
-
 .type-poison {
     background-color: #a33ea1;
 }
-
 .type-ground {
     background-color: #e2bf65;
     color: #222;
 }
-
 .type-flying {
     background-color: #a98ff3;
 }
-
 .type-psychic {
     background-color: #f95587;
 }
-
 .type-bug {
     background-color: #a6b91a;
 }
-
 .type-rock {
     background-color: #b6a136;
 }
-
 .type-ghost {
     background-color: #735797;
 }
-
 .type-dragon {
     background-color: #6f35fc;
 }
-
 .type-dark {
     background-color: #705746;
 }
-
 .type-steel {
     background-color: #b7b7ce;
     color: #222;
 }
-
 .type-fairy {
     background-color: #d685ad;
 }
-
 .pokemon-types {
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
     gap: 8px;
 }
-
 .pokemon-type-badge {
     min-width: 0;
     padding: 7px 13px;
-
     border-radius: 999px;
     border: 1px solid rgba(255, 255, 255, 0.32);
-
     color: white;
     font-size: 13px;
     font-weight: 700;
     text-align: center;
     white-space: nowrap;
-
     background-color: rgba(255, 255, 255, 0.18);
     backdrop-filter: blur(10px);
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22), 0 6px 14px rgba(0, 0, 0, 0.14);
     text-shadow: 0 1px 4px rgba(0, 0, 0, 0.34);
 }
-
 .pokemon-card .pokemon-type-badge {
     flex: 1;
     padding: 7px 8px;
