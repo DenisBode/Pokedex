@@ -82,6 +82,7 @@
 }
 
 .pokemon-type-badge {
+    min-width: 0;
     padding: 7px 13px;
 
     border-radius: 999px;
@@ -90,9 +91,17 @@
     color: white;
     font-size: 13px;
     font-weight: 700;
+    text-align: center;
+    white-space: nowrap;
 
     background-color: rgba(255, 255, 255, 0.18);
     backdrop-filter: blur(10px);
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22), 0 6px 14px rgba(0, 0, 0, 0.14);
     text-shadow: 0 1px 4px rgba(0, 0, 0, 0.34);
+}
+
+.pokemon-card .pokemon-type-badge {
+    flex: 1;
+    padding: 7px 8px;
+    font-size: 12px;
 }

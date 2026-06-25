@@ -7,6 +7,8 @@ let selectedTypes = [];
 let currentSearch = "";
 let currentDialogIndex = 0;
 let isLoading = false;
+// Stores the highest stat values found in fetched API data.
+let maxStatsCache = {};
 
 
 /**
@@ -26,6 +28,7 @@ function initButtons() {
 
     document.getElementById("loadMoreButton").onclick = loadMorePokemon;
     document.getElementById("searchButton").onclick = searchPokemon;
+    document.getElementById("clearSearchButton").onclick = clearSearchInput;
     document.getElementById("searchInput").oninput = handleSearchInput;
     dialog.onclick = closeDialogOnBackdrop;
     dialog.onclose = handleDialogClose;
@@ -102,6 +105,7 @@ async function loadSinglePokemon(url) {
     let pokemon = await response.json();
 
     loadedPokemon.push(pokemon);
+    updateMaxStatsCacheFromApi(pokemon);
     preloadPokemonImage(pokemon);
 
     console.log("Geladenes Pokémon:", pokemon.name);
@@ -111,6 +115,27 @@ function preloadPokemonImage(pokemon) {
     let image = new Image();
 
     image.src = getPokemonDetailImageUrl(pokemon);
+}
+
+function updateMaxStatsCacheFromApi(pokemon) {
+    for (let i = 0; i < pokemon.stats.length; i++) {
+        cacheMaxStat(pokemon.stats[i]);
+    }
+}
+
+function cacheMaxStat(stat) {
+    let statName = stat.stat.name;
+    let currentMax = maxStatsCache[statName] || 0;
+
+    maxStatsCache[statName] = Math.max(currentMax, stat.base_stat);
+}
+
+function getCachedMaxStat(statName) {
+    return maxStatsCache[statName] || 1;
+}
+
+function getStatBarPercent(stat) {
+    return Math.min(stat.base_stat / getCachedMaxStat(stat.stat.name) * 100, 100);
 }
 
 
@@ -246,6 +271,13 @@ function handleSearchInput() {
 
 function getSearchInputValue() {
     return document.getElementById("searchInput").value.toLowerCase().trim();
+}
+
+function clearSearchInput() {
+    document.getElementById("searchInput").value = "";
+    currentSearch = "";
+    updateSearchButton();
+    renderCurrentPokemon();
 }
 
 function getVisiblePokemon() {

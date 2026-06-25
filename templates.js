@@ -173,8 +173,17 @@ function getPokemonStatsTemplate(stats) {
 function getPokemonStatTemplate(stat) {
     return `
         <div class="pokemon-stat">
-            <span>${capitalizeWords(stat.stat.name)}</span>
-            <strong>${stat.base_stat}</strong>
+            ${getPokemonStatBarTemplate(stat)}
+            <div class="pokemon-stat-header">
+                <span>${capitalizeWords(stat.stat.name)}</span>
+                <strong>${stat.base_stat} / ${getCachedMaxStat(stat.stat.name)}</strong>
+            </div>
         </div>
+    `;
+}
+
+function getPokemonStatBarTemplate(stat) {
+    return `
+        <div class="pokemon-stat-fill" style="width: ${getStatBarPercent(stat)}%"></div>
     `;
 }
