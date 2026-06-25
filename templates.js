@@ -74,7 +74,7 @@ function getNotFoundTemplate() {
     `;
 }
 
-function getPokemonDetailCardTemplate(pokemon) {
+function getPokemonDetailCardTemplate(pokemon, activeTab = "about", evolutionNames = []) {
     let mainType = pokemon.types[0].type.name;
 
     return `
@@ -82,9 +82,8 @@ function getPokemonDetailCardTemplate(pokemon) {
             ${getPokemonDialogButtonsTemplate()}
             ${getPokemonDetailHeaderTemplate(pokemon)}
             ${getPokemonDetailImageTemplate(pokemon)}
-            ${getPokemonDetailFactsTemplate(pokemon)}
-            ${getPokemonAbilitiesSectionTemplate(pokemon)}
-            ${getPokemonStatsSectionTemplate(pokemon)}
+            ${getPokemonDetailTabsTemplate(pokemon, activeTab)}
+            ${getPokemonDetailContentTemplate(pokemon, activeTab, evolutionNames)}
         </article>
     `;
 }
@@ -115,6 +114,48 @@ function getPokemonDetailHeaderTemplate(pokemon) {
 function getPokemonDetailImageTemplate(pokemon) {
     return `
         <img class="pokemon-detail-image" data-id="dialog-image" src="${getPokemonDetailImageUrl(pokemon)}" alt="${pokemon.name}" loading="eager">
+    `;
+}
+
+function getPokemonDetailTabsTemplate(pokemon, activeTab) {
+    return `
+        <div class="detail-tabs">
+            ${getDetailTabButtonTemplate(pokemon.id, "about", activeTab)}
+            ${getDetailTabButtonTemplate(pokemon.id, "base-stats", activeTab)}
+            ${getDetailTabButtonTemplate(pokemon.id, "evolution", activeTab)}
+            ${getDetailTabButtonTemplate(pokemon.id, "moves", activeTab)}
+        </div>
+    `;
+}
+
+function getDetailTabButtonTemplate(pokemonId, tabName, activeTab) {
+    return `
+        <button class="detail-tab ${getActiveTabClass(tabName, activeTab)}" onclick="switchDetailTab(${pokemonId}, '${tabName}')">
+            ${capitalizeWords(tabName)}
+        </button>
+    `;
+}
+
+function getActiveTabClass(tabName, activeTab) {
+    return tabName === activeTab ? "active" : "";
+}
+
+function getPokemonDetailContentTemplate(pokemon, activeTab, evolutionNames) {
+    if (activeTab === "evolution") {
+        return getPokemonEvolutionTemplate(evolutionNames);
+    }
+
+    if (activeTab === "moves") {
+        return getPokemonMovesTemplate(pokemon);
+    }
+
+    return activeTab === "base-stats" ? getPokemonStatsSectionTemplate(pokemon) : getPokemonAboutTemplate(pokemon);
+}
+
+function getPokemonAboutTemplate(pokemon) {
+    return `
+        ${getPokemonDetailFactsTemplate(pokemon)}
+        ${getPokemonAbilitiesSectionTemplate(pokemon)}
     `;
 }
 
@@ -158,6 +199,75 @@ function getPokemonAbilitiesTemplate(abilities) {
     return abilities
         .map(ability => capitalizeWords(ability.ability.name))
         .join(", ");
+}
+
+function getPokemonEvolutionTemplate(evolutionNames) {
+    if (evolutionNames.length === 0) {
+        return getDetailLoadingTemplate();
+    }
+
+    return `
+        <section class="pokemon-detail-section">
+            <h3>Evolution</h3>
+            <div class="evolution-chain">${getEvolutionItemsTemplate(evolutionNames)}</div>
+        </section>
+    `;
+}
+
+function getDetailLoadingTemplate() {
+    return `
+        <section class="pokemon-detail-section detail-loading">
+            <span class="button-loader"></span>
+            <p>Loading evolution...</p>
+        </section>
+    `;
+}
+
+function getEvolutionItemsTemplate(evolutionNames) {
+    let evolutionHtml = "";
+
+    for (let i = 0; i < evolutionNames.length; i++) {
+        evolutionHtml += getEvolutionItemTemplate(evolutionNames[i], i);
+    }
+
+    return evolutionHtml;
+}
+
+function getEvolutionItemTemplate(name, index) {
+    return `
+        <div class="evolution-item">
+            <span>Stage ${index + 1}</span>
+            <strong>${name}</strong>
+        </div>
+    `;
+}
+
+function getPokemonMovesTemplate(pokemon) {
+    return `
+        <section class="pokemon-detail-section">
+            <h3>Moves</h3>
+            <div class="moves-list">${getMoveItemsTemplate(pokemon.moves)}</div>
+        </section>
+    `;
+}
+
+function getMoveItemsTemplate(moves) {
+    let movesHtml = "";
+
+    for (let i = 0; i < Math.min(moves.length, 12); i++) {
+        movesHtml += getMoveItemTemplate(moves[i], i);
+    }
+
+    return movesHtml;
+}
+
+function getMoveItemTemplate(moveSlot, index) {
+    return `
+        <div class="move-item">
+            <span>#${index + 1}</span>
+            <strong>${capitalizeWords(moveSlot.move.name)}</strong>
+        </div>
+    `;
 }
 
 function getPokemonStatsTemplate(stats) {
