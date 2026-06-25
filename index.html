@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pokédex</title>
+    <link rel="icon" href="./assets/pokeball.svg" type="image/svg+xml">
 
     <link rel="stylesheet" href="./style.css">
     <link rel="stylesheet" href="./styles/standard.css">
@@ -16,12 +17,15 @@
 <body onload="init()">
 
     <header>
-        <h1>Pokédex</h1>
+        <div class="header-title">
+            <img class="header-logo" src="./assets/pokeball.svg" alt="Pokédex logo">
+            <h1>Pokédex</h1>
+        </div>
 
-        <div>
+        <div class="search-wrapper">
             <input data-id="search-input" id="searchInput" type="text" placeholder="Search Pokémon...">
 
-            <button data-id="search-button" id="searchButton">
+            <button data-id="search-button" id="searchButton" type="button">
                 Search
             </button>
         </div>
@@ -32,7 +36,7 @@
         <section id="pokedex"></section>
 
         <div class="load-more-wrapper">
-            <button data-id="load-more-button" id="loadMoreButton">
+            <button data-id="load-more-button" id="loadMoreButton" type="button">
                 Load more
             </button>
         </div>
