@@ -86,6 +86,13 @@ header h1 {
     transition: box-shadow 0.2s ease, filter 0.2s ease, transform 0.2s ease;
 }
 
+#loadMoreButton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
 #searchButton:hover,
 #loadMoreButton:hover,
 .clear-search-button:hover {
@@ -128,4 +135,21 @@ header h1 {
     cursor: not-allowed;
     filter: grayscale(0.3) brightness(0.82);
     transform: none;
+}
+
+.button-loader {
+    width: 16px;
+    height: 16px;
+
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    border-top-color: white;
+    border-radius: 50%;
+
+    animation: spinLoader 0.8s linear infinite;
+}
+
+@keyframes spinLoader {
+    to {
+        transform: rotate(360deg);
+    }
 }
