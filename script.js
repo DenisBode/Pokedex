@@ -9,6 +9,8 @@ let currentDialogIndex = 0;
 let isLoading = false;
 // Stores the highest stat values found in fetched API data.
 let maxStatsCache = {};
+let activeDetailTab = "about";
+let evolutionCache = {};
 
 
 /**
@@ -67,7 +69,15 @@ function setLoadMoreButton(isDisabled) {
     let button = document.getElementById("loadMoreButton");
 
     button.disabled = isDisabled;
-    button.textContent = isDisabled ? "Loading..." : "Load more";
+    button.innerHTML = getLoadingButtonContent(isDisabled);
+}
+
+function getLoadingButtonContent(isLoading) {
+    if (!isLoading) {
+        return "Load more";
+    }
+
+    return `<span class="button-loader"></span>Loading...`;
 }
 
 function updateSearchButton() {
@@ -342,10 +352,16 @@ function openPokemonDialog(pokemonId) {
     let pokemon = getPokemonById(pokemonId);
     let dialog = document.getElementById("pokemonDialog");
 
+    activeDetailTab = "about";
     currentDialogIndex = getDialogPokemonIndex(pokemonId);
-    dialog.innerHTML = getPokemonDetailCardTemplate(pokemon);
+    renderPokemonDialog(pokemon);
     document.body.classList.add("dialog-open");
     dialog.showModal();
+}
+
+function renderPokemonDialog(pokemon, evolutionNames = []) {
+    document.getElementById("pokemonDialog").innerHTML =
+        getPokemonDetailCardTemplate(pokemon, activeDetailTab, evolutionNames);
 }
 
 function getDialogPokemonIndex(pokemonId) {
@@ -370,6 +386,55 @@ function closeDialogOnBackdrop(event) {
     }
 }
 
+async function switchDetailTab(pokemonId, tabName) {
+    let pokemon = getPokemonById(pokemonId);
+
+    activeDetailTab = tabName;
+    renderPokemonDialog(pokemon);
+
+    if (tabName === "evolution") {
+        await renderEvolutionTab(pokemon);
+    }
+}
+
+async function renderEvolutionTab(pokemon) {
+    let evolutionNames = await getPokemonEvolutionNames(pokemon);
+
+    renderPokemonDialog(pokemon, evolutionNames);
+}
+
+async function getPokemonEvolutionNames(pokemon) {
+    if (evolutionCache[pokemon.id]) {
+        return evolutionCache[pokemon.id];
+    }
+
+    evolutionCache[pokemon.id] = await fetchEvolutionNames(pokemon);
+    return evolutionCache[pokemon.id];
+}
+
+async function fetchEvolutionNames(pokemon) {
+    let species = await fetchJson(pokemon.species.url);
+    let evolution = await fetchJson(species.evolution_chain.url);
+
+    return getEvolutionChainNames(evolution.chain);
+}
+
+async function fetchJson(url) {
+    let response = await fetch(url);
+
+    return await response.json();
+}
+
+function getEvolutionChainNames(chain) {
+    let names = [capitalizeWords(chain.species.name)];
+
+    for (let i = 0; i < chain.evolves_to.length; i++) {
+        names = names.concat(getEvolutionChainNames(chain.evolves_to[i]));
+    }
+
+    return names;
+}
+
 function showNextPokemon() {
     showPokemonByStep(1);
 }
@@ -381,6 +446,7 @@ function showPreviousPokemon() {
 function showPokemonByStep(step) {
     let pokemonList = getVisiblePokemon();
 
+    activeDetailTab = "about";
     currentDialogIndex = (currentDialogIndex + step + pokemonList.length) % pokemonList.length;
-    document.getElementById("pokemonDialog").innerHTML = getPokemonDetailCardTemplate(pokemonList[currentDialogIndex]);
+    renderPokemonDialog(pokemonList[currentDialogIndex]);
 }
