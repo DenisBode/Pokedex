@@ -4,19 +4,24 @@ function getPokemonCardTemplate(pokemon) {
     return `
         <button class="pokemon-card type-${mainType}" data-id="card" onclick="openPokemonDialog(${pokemon.id})">
             <h2>${capitalizeFirstLetter(pokemon.name)}</h2>
-
-            <img 
-                data-id="card-image"
-                src="${pokemon.sprites.front_default}" 
-                alt="${pokemon.name}"
-            >
-
-            <div class="pokemon-types">
-                ${getPokemonTypesTemplate(pokemon.types)}
-            </div>
-
+            ${getPokemonCardImageTemplate(pokemon)}
+            ${getPokemonCardTypesTemplate(pokemon)}
             <p>#${pokemon.id}</p>
         </button>
+    `;
+}
+
+function getPokemonCardImageTemplate(pokemon) {
+    return `
+        <img data-id="card-image" src="${pokemon.sprites.front_default}" alt="${pokemon.name}">
+    `;
+}
+
+function getPokemonCardTypesTemplate(pokemon) {
+    return `
+        <div class="pokemon-types">
+            ${getPokemonTypesTemplate(pokemon.types)}
+        </div>
     `;
 }
 
@@ -43,6 +48,13 @@ function capitalizeFirstLetter(text) {
     return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
+function capitalizeWords(text) {
+    return text
+        .split("-")
+        .map(word => capitalizeFirstLetter(word))
+        .join(" ");
+}
+
 function getTypeFilterButtonTemplate(typeName) {
     return `
         <button 
@@ -52,5 +64,117 @@ function getTypeFilterButtonTemplate(typeName) {
         >
             ${capitalizeFirstLetter(typeName)}
         </button>
+    `;
+}
+
+function getNotFoundTemplate() {
+    return `
+        <p class="not-found" data-id="not-found">
+            No matching Pokémon found.
+        </p>
+    `;
+}
+
+function getPokemonDetailCardTemplate(pokemon) {
+    let mainType = pokemon.types[0].type.name;
+
+    return `
+        <article class="pokemon-detail-card type-${mainType}" data-id="overlay-pokemon-name">
+            ${getPokemonDialogButtonsTemplate()}
+            ${getPokemonDetailHeaderTemplate(pokemon)}
+            ${getPokemonDetailImageTemplate(pokemon)}
+            ${getPokemonDetailFactsTemplate(pokemon)}
+            ${getPokemonAbilitiesSectionTemplate(pokemon)}
+            ${getPokemonStatsSectionTemplate(pokemon)}
+        </article>
+    `;
+}
+
+function getPokemonDetailImageUrl(pokemon) {
+    return pokemon.sprites.other["official-artwork"].front_default || pokemon.sprites.front_default;
+}
+
+function getPokemonDialogButtonsTemplate() {
+    return `
+        <button class="pokemon-detail-close" data-id="close-dialog-button" onclick="closePokemonDialog()">x</button>
+        <button class="dialog-nav-button dialog-nav-prev" data-id="prev-button" onclick="showPreviousPokemon()">‹</button>
+        <button class="dialog-nav-button dialog-nav-next" data-id="next-button" onclick="showNextPokemon()">›</button>
+    `;
+}
+
+function getPokemonDetailHeaderTemplate(pokemon) {
+    return `
+        <div class="pokemon-detail-header">
+            <p>#${pokemon.id}</p>
+            <h2>${capitalizeFirstLetter(pokemon.name)}</h2>
+            <div class="pokemon-types">${getPokemonTypesTemplate(pokemon.types)}</div>
+        </div>
+    `;
+}
+
+function getPokemonDetailImageTemplate(pokemon) {
+    return `
+        <img class="pokemon-detail-image" data-id="dialog-image" src="${getPokemonDetailImageUrl(pokemon)}" alt="${pokemon.name}" loading="eager">
+    `;
+}
+
+function getPokemonDetailFactsTemplate(pokemon) {
+    return `
+        <div class="pokemon-detail-info">
+            ${getPokemonDetailInfoTemplate("Height", pokemon.height / 10 + " m")}
+            ${getPokemonDetailInfoTemplate("Weight", pokemon.weight / 10 + " kg")}
+        </div>
+    `;
+}
+
+function getPokemonAbilitiesSectionTemplate(pokemon) {
+    return `
+        <section class="pokemon-detail-section">
+            <h3>Abilities</h3>
+            <p>${getPokemonAbilitiesTemplate(pokemon.abilities)}</p>
+        </section>
+    `;
+}
+
+function getPokemonStatsSectionTemplate(pokemon) {
+    return `
+        <section class="pokemon-detail-section">
+            <h3>Base stats</h3>
+            ${getPokemonStatsTemplate(pokemon.stats)}
+        </section>
+    `;
+}
+
+function getPokemonDetailInfoTemplate(label, value) {
+    return `
+        <div>
+            <span>${label}</span>
+            <strong>${value}</strong>
+        </div>
+    `;
+}
+
+function getPokemonAbilitiesTemplate(abilities) {
+    return abilities
+        .map(ability => capitalizeWords(ability.ability.name))
+        .join(", ");
+}
+
+function getPokemonStatsTemplate(stats) {
+    let statsHtml = "";
+
+    for (let i = 0; i < stats.length; i++) {
+        statsHtml += getPokemonStatTemplate(stats[i]);
+    }
+
+    return statsHtml;
+}
+
+function getPokemonStatTemplate(stat) {
+    return `
+        <div class="pokemon-stat">
+            <span>${capitalizeWords(stat.stat.name)}</span>
+            <strong>${stat.base_stat}</strong>
+        </div>
     `;
 }

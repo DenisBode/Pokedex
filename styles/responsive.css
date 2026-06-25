@@ -43,6 +43,15 @@
         font-size: 24px;
     }
 
+    .search-wrapper {
+        flex-direction: column;
+    }
+
+    #searchButton,
+    #loadMoreButton {
+        width: 100%;
+    }
+
     .type-filter {
         justify-content: flex-start;
         overflow-x: auto;

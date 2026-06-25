@@ -4,6 +4,9 @@ let currentOffset = 0;
 let pokemonLimit = 20;
 let loadedPokemon = [];
 let selectedTypes = [];
+let currentSearch = "";
+let currentDialogIndex = 0;
+let isLoading = false;
 
 
 /**
@@ -13,8 +16,20 @@ let selectedTypes = [];
 function init() {
     console.log("App gestartet");
 
+    initButtons();
     loadPokemonTypes();
     loadPokemonList();
+}
+
+function initButtons() {
+    let dialog = document.getElementById("pokemonDialog");
+
+    document.getElementById("loadMoreButton").onclick = loadMorePokemon;
+    document.getElementById("searchButton").onclick = searchPokemon;
+    document.getElementById("searchInput").oninput = handleSearchInput;
+    dialog.onclick = closeDialogOnBackdrop;
+    dialog.onclose = handleDialogClose;
+    updateSearchButton();
 }
 
 
@@ -22,6 +37,13 @@ function init() {
  * Lädt eine Liste mit Pokemon.
  */
 async function loadPokemonList() {
+    if (isLoading) {
+        return;
+    }
+
+    isLoading = true;
+    setLoadMoreButton(true);
+
     console.log("Lädt Pokémon ab Offset:", currentOffset);
 
     let response = await fetch(getPokemonListUrl());
@@ -29,7 +51,25 @@ async function loadPokemonList() {
 
     console.log("Geladene Pokémon-Liste:", data.results);
 
-    loadPokemonDetails(data.results);
+    await loadPokemonDetails(data.results);
+    setLoadMoreButton(false);
+    isLoading = false;
+}
+
+async function loadMorePokemon() {
+    await loadPokemonList();
+}
+
+function setLoadMoreButton(isDisabled) {
+    let button = document.getElementById("loadMoreButton");
+
+    button.disabled = isDisabled;
+    button.textContent = isDisabled ? "Loading..." : "Load more";
+}
+
+function updateSearchButton() {
+    let searchLength = getSearchInputValue().length;
+    document.getElementById("searchButton").disabled = searchLength > 0 && searchLength < 3;
 }
 
 
@@ -50,6 +90,7 @@ async function loadPokemonDetails(pokemonList) {
     }
 
     currentOffset += pokemonLimit;
+    renderCurrentPokemon();
 }
 
 
@@ -61,10 +102,15 @@ async function loadSinglePokemon(url) {
     let pokemon = await response.json();
 
     loadedPokemon.push(pokemon);
+    preloadPokemonImage(pokemon);
 
     console.log("Geladenes Pokémon:", pokemon.name);
+}
 
-    renderPokemonCard(pokemon);
+function preloadPokemonImage(pokemon) {
+    let image = new Image();
+
+    image.src = getPokemonDetailImageUrl(pokemon);
 }
 
 
@@ -85,6 +131,11 @@ function renderPokemonCards(pokemonList) {
     let pokedex = document.getElementById("pokedex");
 
     pokedex.innerHTML = "";
+
+    if (pokemonList.length === 0) {
+        pokedex.innerHTML = getNotFoundTemplate();
+        return;
+    }
 
     for (let i = 0; i < pokemonList.length; i++) {
         renderPokemonCard(pokemonList[i]);
@@ -157,7 +208,7 @@ function removeSelectedType(typeName) {
  */
 function updateTypeFilter() {
     updateTypeButtonStyles();
-    renderFilteredPokemon();
+    renderCurrentPokemon();
 
     console.log("Aktive Typen:", selectedTypes);
 }
@@ -167,13 +218,38 @@ function updateTypeFilter() {
  * Rendert nur passende Pokemon.
  */
 function renderFilteredPokemon() {
-    if (selectedTypes.length === 0) {
-        renderPokemonCards(loadedPokemon);
+    renderCurrentPokemon();
+}
+
+function renderCurrentPokemon() {
+    renderPokemonCards(getVisiblePokemon());
+}
+
+function searchPokemon() {
+    let searchValue = getSearchInputValue();
+
+    if (searchValue.length > 0 && searchValue.length < 3) {
         return;
     }
 
-    let filteredPokemon = loadedPokemon.filter(hasSelectedType);
-    renderPokemonCards(filteredPokemon);
+    currentSearch = searchValue;
+    renderCurrentPokemon();
+}
+
+function handleSearchInput() {
+    updateSearchButton();
+
+    if (getSearchInputValue() === "") {
+        searchPokemon();
+    }
+}
+
+function getSearchInputValue() {
+    return document.getElementById("searchInput").value.toLowerCase().trim();
+}
+
+function getVisiblePokemon() {
+    return loadedPokemon.filter(hasSelectedType).filter(matchesSearch);
 }
 
 
@@ -181,11 +257,19 @@ function renderFilteredPokemon() {
  * Prüft, ob ein Pokémon einen aktiven Typ besitzt.
  */
 function hasSelectedType(pokemon) {
+    if (selectedTypes.length === 0) {
+        return true;
+    }
+
     let pokemonTypes = getPokemonTypeNames(pokemon);
 
     return selectedTypes.some(type =>
         pokemonTypes.includes(type)
     );
+}
+
+function matchesSearch(pokemon) {
+    return pokemon.name.includes(currentSearch);
 }
 
 
@@ -223,5 +307,48 @@ function updateSingleTypeButton(button) {
  * Platzhalter für die spätere große Ansicht.
  */
 function openPokemonDialog(pokemonId) {
-    console.log("Clicked Pokémon ID:", pokemonId);
+    let pokemon = getPokemonById(pokemonId);
+    let dialog = document.getElementById("pokemonDialog");
+
+    currentDialogIndex = getDialogPokemonIndex(pokemonId);
+    dialog.innerHTML = getPokemonDetailCardTemplate(pokemon);
+    document.body.classList.add("dialog-open");
+    dialog.showModal();
+}
+
+function getDialogPokemonIndex(pokemonId) {
+    return getVisiblePokemon().findIndex(pokemon => pokemon.id === pokemonId);
+}
+
+function getPokemonById(pokemonId) {
+    return loadedPokemon.find(pokemon => pokemon.id === pokemonId);
+}
+
+function closePokemonDialog() {
+    document.getElementById("pokemonDialog").close();
+}
+
+function handleDialogClose() {
+    document.body.classList.remove("dialog-open");
+}
+
+function closeDialogOnBackdrop(event) {
+    if (event.target.id === "pokemonDialog") {
+        closePokemonDialog();
+    }
+}
+
+function showNextPokemon() {
+    showPokemonByStep(1);
+}
+
+function showPreviousPokemon() {
+    showPokemonByStep(-1);
+}
+
+function showPokemonByStep(step) {
+    let pokemonList = getVisiblePokemon();
+
+    currentDialogIndex = (currentDialogIndex + step + pokemonList.length) % pokemonList.length;
+    document.getElementById("pokemonDialog").innerHTML = getPokemonDetailCardTemplate(pokemonList[currentDialogIndex]);
 }

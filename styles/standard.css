@@ -5,14 +5,23 @@
     font-family: Arial, Helvetica, sans-serif;
 }
 
+
 body {
     min-height: 100vh;
     background-color: #2b2b2b;
     color: white;
+
+}
+
+body.dialog-open {
+    overflow: hidden;
 }
 
 main {
+    width: 100%;
+    max-width: 1440px;
     min-height: calc(100vh - 128px);
+    margin: 0 auto;
 }
 
 img {
