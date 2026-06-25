@@ -6,7 +6,6 @@ function getPokemonCardTemplate(pokemon) {
             <h2>${capitalizeFirstLetter(pokemon.name)}</h2>
             ${getPokemonCardImageTemplate(pokemon)}
             ${getPokemonCardTypesTemplate(pokemon)}
-            <p>#${pokemon.id}</p>
         </button>
     `;
 }
@@ -97,15 +96,16 @@ function getPokemonDetailImageUrl(pokemon) {
 function getPokemonDialogButtonsTemplate() {
     return `
         <button class="pokemon-detail-close" data-id="close-dialog-button" onclick="closePokemonDialog()">x</button>
+        <div class="dialog-nav">
         <button class="dialog-nav-button dialog-nav-prev" data-id="prev-button" onclick="showPreviousPokemon()">‹</button>
         <button class="dialog-nav-button dialog-nav-next" data-id="next-button" onclick="showNextPokemon()">›</button>
+        </div>
     `;
 }
 
 function getPokemonDetailHeaderTemplate(pokemon) {
     return `
         <div class="pokemon-detail-header">
-            <p>#${pokemon.id}</p>
             <h2>${capitalizeFirstLetter(pokemon.name)}</h2>
             <div class="pokemon-types">${getPokemonTypesTemplate(pokemon.types)}</div>
         </div>
