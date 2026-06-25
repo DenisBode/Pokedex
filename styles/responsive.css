@@ -75,6 +75,10 @@
         width: 100%;
         max-width: 280px;
     }
+
+    .detail-tabs {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
 /* small Mobilephone */
