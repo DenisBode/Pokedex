@@ -79,6 +79,15 @@
     .detail-tabs {
         grid-template-columns: repeat(2, 1fr);
     }
+
+    .site-footer-content,
+    .footer-links {
+        flex-direction: column;
+    }
+
+    .legal-container {
+        padding: 22px;
+    }
 }
 
 /* Small mobile phones */
