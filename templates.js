@@ -94,11 +94,29 @@ function getPokemonDetailImageUrl(pokemon) {
 
 function getPokemonDialogButtonsTemplate() {
     return `
+        ${getPokemonCloseButtonTemplate()}
+        ${getPokemonDialogNavTemplate()}
+    `;
+}
+
+function getPokemonCloseButtonTemplate() {
+    return `
         <button class="pokemon-detail-close" data-id="close-dialog-button" onclick="closePokemonDialog()">x</button>
+    `;
+}
+
+function getPokemonDialogNavTemplate() {
+    return `
         <div class="dialog-nav">
-        <button class="dialog-nav-button dialog-nav-prev" data-id="prev-button" onclick="showPreviousPokemon()">‹</button>
-        <button class="dialog-nav-button dialog-nav-next" data-id="next-button" onclick="showNextPokemon()">›</button>
+            ${getPokemonDialogNavButtonTemplate("prev", "showPreviousPokemon()", "Prev")}
+            ${getPokemonDialogNavButtonTemplate("next", "showNextPokemon()", "Next")}
         </div>
+    `;
+}
+
+function getPokemonDialogNavButtonTemplate(direction, action, label) {
+    return `
+        <button class="dialog-nav-button dialog-nav-${direction}" data-id="${direction}-button" onclick="${action}">${label}</button>
     `;
 }
 

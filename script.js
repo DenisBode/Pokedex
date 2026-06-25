@@ -14,11 +14,11 @@ let evolutionCache = {};
 
 
 /**
- * Startet die App.
- * Wird über onload="init()" in der index.html aufgerufen.
+ * Starts the app.
+ * Called by onload="init()" in index.html.
  */
 function init() {
-    console.log("App gestartet");
+    console.log("App started");
 
     initButtons();
     loadPokemonTypes();
@@ -39,7 +39,7 @@ function initButtons() {
 
 
 /**
- * Lädt eine Liste mit Pokemon.
+ * Loads the next list of Pokemon.
  */
 async function loadPokemonList() {
     if (isLoading) {
@@ -49,12 +49,12 @@ async function loadPokemonList() {
     isLoading = true;
     setLoadMoreButton(true);
 
-    console.log("Lädt Pokémon ab Offset:", currentOffset);
+    console.log("Loading Pokemon from offset:", currentOffset);
 
     let response = await fetch(getPokemonListUrl());
     let data = await response.json();
 
-    console.log("Geladene Pokémon-Liste:", data.results);
+    console.log("Loaded Pokemon list:", data.results);
 
     await loadPokemonDetails(data.results);
     setLoadMoreButton(false);
@@ -87,7 +87,7 @@ function updateSearchButton() {
 
 
 /**
- * Baut die URL für die Pokemon-Liste.
+ * Builds the URL for the Pokemon list.
  */
 function getPokemonListUrl() {
     return BASE_URL + `pokemon?limit=${pokemonLimit}&offset=${currentOffset}`;
@@ -95,7 +95,7 @@ function getPokemonListUrl() {
 
 
 /**
- * Lädt die Detaildaten zu jedem Pokemon aus der Liste.
+ * Loads the detail data for each Pokemon in the list.
  */
 async function loadPokemonDetails(pokemonList) {
     for (let i = 0; i < pokemonList.length; i++) {
@@ -108,7 +108,7 @@ async function loadPokemonDetails(pokemonList) {
 
 
 /**
- * Lädt ein einzelnes Pokemon mit allen Details.
+ * Loads one Pokemon with all needed details.
  */
 async function loadSinglePokemon(url) {
     let response = await fetch(url);
@@ -118,7 +118,7 @@ async function loadSinglePokemon(url) {
     updateMaxStatsCacheFromApi(pokemon);
     preloadPokemonImage(pokemon);
 
-    console.log("Geladenes Pokémon:", pokemon.name);
+    console.log("Loaded Pokemon:", pokemon.name);
 }
 
 function preloadPokemonImage(pokemon) {
@@ -150,7 +150,7 @@ function getStatBarPercent(stat) {
 
 
 /**
- * Rendert eine einzelne Pokemon-Karte.
+ * Renders one Pokemon card.
  */
 function renderPokemonCard(pokemon) {
     let pokedex = document.getElementById("pokedex");
@@ -160,7 +160,7 @@ function renderPokemonCard(pokemon) {
 
 
 /**
- * Rendert mehrere Pokemon-Karten neu.
+ * Renders all visible Pokemon cards again.
  */
 function renderPokemonCards(pokemonList) {
     let pokedex = document.getElementById("pokedex");
@@ -179,21 +179,21 @@ function renderPokemonCards(pokemonList) {
 
 
 /**
- * Lädt alle Pokémon-Typen für den Filter.
+ * Loads all Pokemon types for the filter.
  */
 async function loadPokemonTypes() {
     let response = await fetch(BASE_URL + "type");
     let data = await response.json();
     let types = getValidTypes(data.results);
 
-    console.log("Verfügbare Typen:", types);
+    console.log("Available types:", types);
 
     renderTypeFilter(types);
 }
 
 
 /**
- * Entfernt Typen, die wir nicht brauchen.
+ * Removes types that should not be shown.
  */
 function getValidTypes(types) {
     return types.filter(type =>
@@ -203,7 +203,7 @@ function getValidTypes(types) {
 
 
 /**
- * Rendert die Filter-Buttons.
+ * Renders the filter buttons.
  */
 function renderTypeFilter(types) {
     let typeFilter = document.getElementById("typeFilter");
@@ -217,7 +217,7 @@ function renderTypeFilter(types) {
 
 
 /**
- * Aktiviert oder deaktiviert einen Typ-Filter.
+ * Toggles one type filter.
  */
 function toggleTypeFilter(typeName) {
     if (selectedTypes.includes(typeName)) {
@@ -231,7 +231,7 @@ function toggleTypeFilter(typeName) {
 
 
 /**
- * Entfernt einen aktiven Typ aus dem Filter.
+ * Removes one active type from the filter.
  */
 function removeSelectedType(typeName) {
     selectedTypes = selectedTypes.filter(type => type !== typeName);
@@ -239,18 +239,18 @@ function removeSelectedType(typeName) {
 
 
 /**
- * Aktualisiert Filter-Buttons und Pokémon-Anzeige.
+ * Updates filter buttons and the Pokemon list.
  */
 function updateTypeFilter() {
     updateTypeButtonStyles();
     renderCurrentPokemon();
 
-    console.log("Aktive Typen:", selectedTypes);
+    console.log("Active types:", selectedTypes);
 }
 
 
 /**
- * Rendert nur passende Pokemon.
+ * Renders only matching Pokemon.
  */
 function renderFilteredPokemon() {
     renderCurrentPokemon();
@@ -296,7 +296,7 @@ function getVisiblePokemon() {
 
 
 /**
- * Prüft, ob ein Pokémon einen aktiven Typ besitzt.
+ * Checks if a Pokemon has one selected type.
  */
 function hasSelectedType(pokemon) {
     if (selectedTypes.length === 0) {
@@ -316,7 +316,7 @@ function matchesSearch(pokemon) {
 
 
 /**
- * Holt alle Typ-Namen eines Pokemon.
+ * Gets all type names from one Pokemon.
  */
 function getPokemonTypeNames(pokemon) {
     return pokemon.types.map(typeSlot => typeSlot.type.name);
@@ -324,7 +324,7 @@ function getPokemonTypeNames(pokemon) {
 
 
 /**
- * Aktualisiert alle Filter-Button-Styles.
+ * Updates all filter button styles.
  */
 function updateTypeButtonStyles() {
     let buttons = document.querySelectorAll(".type-filter-button");
@@ -336,7 +336,7 @@ function updateTypeButtonStyles() {
 
 
 /**
- * Setzt active auf einen einzelnen Button.
+ * Sets the active state on one button.
  */
 function updateSingleTypeButton(button) {
     let typeName = button.dataset.type;
@@ -346,7 +346,7 @@ function updateSingleTypeButton(button) {
 
 
 /**
- * Platzhalter für die spätere große Ansicht.
+ * Opens the large Pokemon detail view.
  */
 function openPokemonDialog(pokemonId) {
     let pokemon = getPokemonById(pokemonId);

@@ -36,7 +36,7 @@
     }
 }
 
-/* middle Mobilephone */
+/* Medium mobile phones */
 
 @media (max-width: 480px) {
     header h1 {
@@ -81,7 +81,7 @@
     }
 }
 
-/* small Mobilephone */
+/* Small mobile phones */
 
 @media (max-width: 320px) {
     header {
