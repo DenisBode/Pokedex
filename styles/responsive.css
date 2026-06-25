@@ -53,16 +53,15 @@
     }
 
     .type-filter {
-        justify-content: flex-start;
-        overflow-x: auto;
-        flex-wrap: nowrap;
+        justify-content: center;
+        flex-wrap: wrap;
 
         width: 100%;
         padding: 12px;
     }
 
     .type-filter-button {
-        flex-shrink: 0;
+        flex: 0 1 auto;
         padding: 8px 12px;
         font-size: 12px;
     }
@@ -86,7 +85,13 @@
     }
 
     .type-filter {
+        gap: 6px;
         padding: 8px;
+    }
+
+    .type-filter-button {
+        padding: 7px 10px;
+        font-size: 11px;
     }
 
     #pokedex {
