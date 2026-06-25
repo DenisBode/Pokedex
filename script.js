@@ -194,6 +194,13 @@ function renderFilteredPokemon() {
 }
 function renderCurrentPokemon() {
     renderPokemonCards(getVisiblePokemon());
+    updateLoadMoreButtonVisibility();
+}
+function updateLoadMoreButtonVisibility() {
+    document.querySelector(".load-more-wrapper").hidden = hasActiveFilter();
+}
+function hasActiveFilter() {
+    return currentSearch !== "" || selectedTypes.length > 0;
 }
 function searchPokemon() {
     let searchValue = getSearchInputValue();
