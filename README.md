@@ -13,6 +13,7 @@ Ein kleines Pokedex-Projekt, das Pokemon-Daten aus der PokeAPI laedt und als res
 
 - Laedt beim Start 20 Pokemon
 - Weitere Pokemon koennen ueber den `Load more` Button geladen werden
+- Sichtbarer Loading-Button mit Spinner waehrend neue Pokemon geladen werden
 - Filterung nach Pokemon-Typen
 - Suche nach Pokemon-Namen ab 3 Zeichen
 - Clear-Button direkt in der Suchleiste
@@ -21,6 +22,14 @@ Ein kleines Pokedex-Projekt, das Pokemon-Daten aus der PokeAPI laedt und als res
 - Moderne Stat-Balken, die mit den hoechsten bisher geladenen Stat-Werten verglichen werden
 - Responsive Layout bis 320px Breite
 - Favicon und Header-Logo
+
+## Extras
+
+- Detailbilder werden vorgeladen, damit sie beim Oeffnen schneller sichtbar sind
+- Stat-Balken vergleichen jeden Wert mit dem hoechsten bisher geladenen Wert
+- Type-Filter koennen miteinander kombiniert werden
+- Suchfeld kann direkt ueber den Button im Input geleert werden
+- Das Overlay kann ueber den Close-Button, Escape oder Klick neben die Karte geschlossen werden
 
 ## Installation
 
