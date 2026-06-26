@@ -11,6 +11,18 @@ let activeDetailTab = "about";
 let evolutionCache = {};
 let typeFilterUrls = [];
 
+function capitalizeFirstLetter(text) {
+    return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
+function capitalizeWords(text) {
+    return text.split("-").map(capitalizeFirstLetter).join(" ");
+}
+
+function getPokemonDetailImageUrl(pokemon) {
+    return pokemon.sprites.other["official-artwork"].front_default || pokemon.sprites.front_default;
+}
+
 function init() {
     initButtons();
     loadPokemonTypes();
@@ -44,7 +56,6 @@ async function loadPokemonList() {
     }
 }
 
-// Routes to loadMoreTypeFilterPokemon when a type filter is active
 async function loadMorePokemon() {
     if (selectedTypes.length > 0) return loadMoreTypeFilterPokemon();
     return loadPokemonList();
@@ -65,7 +76,6 @@ function getPokemonListUrl() {
     return BASE_URL + `pokemon?limit=${pokemonLimit}&offset=${currentOffset}`;
 }
 
-// Loads details sequentially, advances offset, then re-renders
 async function loadPokemonDetails(pokemonList) {
     for (let i = 0; i < pokemonList.length; i++) {
         await loadSinglePokemon(pokemonList[i].url);
@@ -91,14 +101,12 @@ function preloadPokemonImage(pokemon) {
     image.src = getPokemonDetailImageUrl(pokemon);
 }
 
-// Updates maxStatsCache for every stat of a Pokémon — used to scale stat bars
 function updateMaxStatsCacheFromApi(pokemon) {
     for (let i = 0; i < pokemon.stats.length; i++) {
         cacheMaxStat(pokemon.stats[i]);
     }
 }
 
-// Tracks the running maximum per stat name across all loaded Pokémon
 function cacheMaxStat(stat) {
     let statName = stat.stat.name;
     let currentMax = maxStatsCache[statName] || 0;
@@ -118,8 +126,7 @@ function renderError(message) {
 }
 
 function renderPokemonCard(pokemon) {
-    let pokedex = document.getElementById("pokedex");
-    pokedex.innerHTML += getPokemonCardTemplate(pokemon);
+    document.getElementById("pokedex").innerHTML += getPokemonCardTemplate(pokemon);
 }
 
 function renderPokemonCards(pokemonList) {
@@ -144,7 +151,6 @@ function updateLoadMoreState() {
     document.getElementById("loadMoreButton").disabled = isLoadMoreExhausted();
 }
 
-// Returns true when no further loading would change the visible result
 function isLoadMoreExhausted() {
     if (currentSearch !== "") return getVisiblePokemon().length < pokemonLimit;
     if (selectedTypes.length === 0) return false;
@@ -176,7 +182,7 @@ function getPokemonDetailContentTemplate(pokemon, activeTab, evolutionNames) {
             ? getDetailLoadingTemplate()
             : getPokemonEvolutionTemplate(evolutionNames);
     }
-    if (activeTab === "moves") return getPokemonMovesTemplate(pokemon);
+    if (activeTab === "moves") return getPokemonMovesTemplate(pokemon.moves.slice(0, 12));
     return activeTab === "base-stats"
         ? getPokemonStatsSectionTemplate(pokemon)
         : getPokemonAboutTemplate(pokemon);
@@ -228,13 +234,11 @@ function updateTabContent(pokemon, evolutionNames = []) {
         getPokemonDetailContentTemplate(pokemon, activeDetailTab, evolutionNames);
 }
 
-// Fetches evolution names and passes them to updateTabContent
 async function renderEvolutionTab(pokemon) {
     let evolutionNames = await getPokemonEvolutionNames(pokemon);
     updateTabContent(pokemon, evolutionNames);
 }
 
-// Returns cached evolution names or fetches and caches them
 async function getPokemonEvolutionNames(pokemon) {
     if (evolutionCache[pokemon.id]) return evolutionCache[pokemon.id];
     evolutionCache[pokemon.id] = await fetchEvolutionNames(pokemon);

@@ -5,7 +5,6 @@ async function loadPokemonTypes() {
     renderTypeFilter(types);
 }
 
-// Removes non-standard types and sorts alphabetically
 function getValidTypes(types) {
     return types
         .filter(type => type.name !== "unknown" && type.name !== "shadow")
@@ -33,7 +32,6 @@ function removeSelectedType(typeName) {
     selectedTypes = selectedTypes.filter(type => type !== typeName);
 }
 
-// Syncs button styles, then loads filtered Pokemon or resets to full list
 async function updateTypeFilter() {
     updateTypeButtonStyles();
     if (selectedTypes.length > 0) {
@@ -51,6 +49,8 @@ async function loadPokemonForSelectedTypes() {
     try {
         typeFilterUrls = await getAllUrlsForSelectedTypes();
         await loadTypeFilterBatch();
+    } catch (error) {
+        renderError("Failed to load type filter. Please try again.");
     } finally {
         isLoading = false;
     }
@@ -63,13 +63,14 @@ async function loadTypeFilterBatch() {
     renderCurrentPokemon();
 }
 
-// Wraps loadTypeFilterBatch with loading state for the Load More button
 async function loadMoreTypeFilterPokemon() {
     if (isLoading) return;
     isLoading = true;
     setLoadMoreButton(true);
     try {
         await loadTypeFilterBatch();
+    } catch (error) {
+        renderError("Failed to load more Pokémon. Please try again.");
     } finally {
         setLoadMoreButton(false);
         isLoading = false;

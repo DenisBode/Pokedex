@@ -6,6 +6,8 @@
 }
 body {
     min-height: 100vh;
+    display: flex;
+    flex-direction: column;
     background-color: #2b2b2b;
     color: white;
 }
@@ -15,7 +17,7 @@ body.dialog-open {
 main {
     width: 100%;
     max-width: 1440px;
-    min-height: calc(100vh - 128px);
+    flex: 1;
     margin: 0 auto;
 }
 img {
