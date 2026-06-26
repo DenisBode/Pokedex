@@ -5,9 +5,11 @@ async function loadPokemonTypes() {
     renderTypeFilter(types);
 }
 
-// Removes non-standard types (unknown, shadow) that shouldn't appear in the filter
+// Removes non-standard types and sorts alphabetically
 function getValidTypes(types) {
-    return types.filter(type => type.name !== "unknown" && type.name !== "shadow");
+    return types
+        .filter(type => type.name !== "unknown" && type.name !== "shadow")
+        .sort((a, b) => a.name.localeCompare(b.name));
 }
 
 function renderTypeFilter(types) {
@@ -31,7 +33,7 @@ function removeSelectedType(typeName) {
     selectedTypes = selectedTypes.filter(type => type !== typeName);
 }
 
-// Syncs button styles, then loads filtered Pokémon or resets to full list
+// Syncs button styles, then loads filtered Pokemon or resets to full list
 async function updateTypeFilter() {
     updateTypeButtonStyles();
     if (selectedTypes.length > 0) {
@@ -54,7 +56,7 @@ async function loadPokemonForSelectedTypes() {
     }
 }
 
-// Skips already-loaded Pokémon and fetches only the next unloaded batch (up to pokemonLimit)
+// Skips already-loaded Pokemon and fetches only the next unloaded batch (up to pokemonLimit)
 async function loadTypeFilterBatch() {
     let missing = typeFilterUrls.filter(url => !isPokemonLoaded(getIdFromUrl(url)));
     await Promise.allSettled(missing.slice(0, pokemonLimit).map(loadSinglePokemon));
@@ -101,3 +103,19 @@ function updateTypeButtonStyles() {
     for (let i = 0; i < buttons.length; i++) {
         updateSingleTypeButton(buttons[i]);
     }
+}
+
+function updateSingleTypeButton(button) {
+    let typeName = button.dataset.type;
+    button.classList.toggle("active", selectedTypes.includes(typeName));
+}
+
+function hasSelectedType(pokemon) {
+    if (selectedTypes.length === 0) return true;
+    let pokemonTypes = getPokemonTypeNames(pokemon);
+    return selectedTypes.every(type => pokemonTypes.includes(type));
+}
+
+function getPokemonTypeNames(pokemon) {
+    return pokemon.types.map(typeSlot => typeSlot.type.name);
+}

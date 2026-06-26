@@ -50,6 +50,9 @@
     justify-content: center;
     padding: 24px;
 }
+.load-more-wrapper[hidden] {
+    display: none;
+}
 .not-found {
     width: min(92vw, 520px);
     padding: 18px 22px;

@@ -45,10 +45,10 @@ async function loadMorePokemon() {
     return loadPokemonList();
 }
 
-function setLoadMoreButton(isDisabled) {
+function setLoadMoreButton(isLoading) {
     let button = document.getElementById("loadMoreButton");
-    button.disabled = isDisabled;
-    button.innerHTML = getLoadingButtonContent(isDisabled);
+    button.disabled = isLoading || shouldHideLoadMore();
+    button.innerHTML = getLoadingButtonContent(isLoading);
 }
 
 function getLoadingButtonContent(isLoading) {
@@ -127,12 +127,13 @@ function renderCurrentPokemon() {
 }
 
 function updateLoadMoreButtonVisibility() {
-    document.querySelector(".load-more-wrapper").hidden = shouldHideLoadMore();
+    document.querySelector(".load-more-wrapper").hidden = false;
+    document.getElementById("loadMoreButton").disabled = shouldHideLoadMore();
 }
 
-// Hides Load More during active search or when all type-filter URLs are already loaded
+// Hides Load More when search results are below the page size, or all type-filter URLs are loaded
 function shouldHideLoadMore() {
-    if (currentSearch !== "") return true;
+    if (currentSearch !== "") return getVisiblePokemon().length < pokemonLimit;
     if (selectedTypes.length === 0) return false;
     return typeFilterUrls.every(url => isPokemonLoaded(getIdFromUrl(url)));
 }

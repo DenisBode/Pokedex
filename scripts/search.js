@@ -24,4 +24,10 @@ function getSearchInputValue() {
 function clearSearchInput() {
     document.getElementById("searchInput").value = "";
     currentSearch = "";
-    u
+    updateSearchButton();
+    renderCurrentPokemon();
+}
+
+function matchesSearch(pokemon) {
+    return pokemon.name.includes(currentSearch);
+}
