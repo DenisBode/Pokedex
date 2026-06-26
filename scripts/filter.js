@@ -113,7 +113,7 @@ function updateSingleTypeButton(button) {
 function hasSelectedType(pokemon) {
     if (selectedTypes.length === 0) return true;
     let pokemonTypes = getPokemonTypeNames(pokemon);
-    return selectedTypes.every(type => pokemonTypes.includes(type));
+    return selectedTypes.some(type => pokemonTypes.includes(type));
 }
 
 function getPokemonTypeNames(pokemon) {
