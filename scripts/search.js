@@ -1,3 +1,4 @@
+// Disables the search button while input is between 1 and 2 characters
 function updateSearchButton() {
     let searchLength = getSearchInputValue().length;
     document.getElementById("searchButton").disabled = searchLength > 0 && searchLength < 3;
@@ -10,6 +11,7 @@ function searchPokemon() {
     renderCurrentPokemon();
 }
 
+// Also triggers search when the field is cleared (empty string)
 function handleSearchInput() {
     updateSearchButton();
     if (getSearchInputValue() === "") searchPokemon();
@@ -22,10 +24,4 @@ function getSearchInputValue() {
 function clearSearchInput() {
     document.getElementById("searchInput").value = "";
     currentSearch = "";
-    updateSearchButton();
-    renderCurrentPokemon();
-}
-
-function matchesSearch(pokemon) {
-    return pokemon.name.includes(currentSearch);
-}
+    u

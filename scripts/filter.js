@@ -5,6 +5,7 @@ async function loadPokemonTypes() {
     renderTypeFilter(types);
 }
 
+// Removes non-standard types (unknown, shadow) that shouldn't appear in the filter
 function getValidTypes(types) {
     return types.filter(type => type.name !== "unknown" && type.name !== "shadow");
 }
@@ -30,6 +31,7 @@ function removeSelectedType(typeName) {
     selectedTypes = selectedTypes.filter(type => type !== typeName);
 }
 
+// Syncs button styles, then loads filtered Pokémon or resets to full list
 async function updateTypeFilter() {
     updateTypeButtonStyles();
     if (selectedTypes.length > 0) {
@@ -40,6 +42,7 @@ async function updateTypeFilter() {
     }
 }
 
+// Fetches all matching URLs first, then loads the initial batch
 async function loadPokemonForSelectedTypes() {
     if (isLoading) return;
     isLoading = true;
@@ -51,12 +54,14 @@ async function loadPokemonForSelectedTypes() {
     }
 }
 
+// Skips already-loaded Pokémon and fetches only the next unloaded batch (up to pokemonLimit)
 async function loadTypeFilterBatch() {
     let missing = typeFilterUrls.filter(url => !isPokemonLoaded(getIdFromUrl(url)));
     await Promise.allSettled(missing.slice(0, pokemonLimit).map(loadSinglePokemon));
     renderCurrentPokemon();
 }
 
+// Wraps loadTypeFilterBatch with loading state for the Load More button
 async function loadMoreTypeFilterPokemon() {
     if (isLoading) return;
     isLoading = true;
@@ -69,6 +74,7 @@ async function loadMoreTypeFilterPokemon() {
     }
 }
 
+// Fetches URLs for all selected types in parallel, then merges and deduplicates
 async function getAllUrlsForSelectedTypes() {
     let urlSets = await Promise.all(selectedTypes.map(fetchTypeUrls));
     let allUrls = urlSets.flat();
@@ -95,19 +101,3 @@ function updateTypeButtonStyles() {
     for (let i = 0; i < buttons.length; i++) {
         updateSingleTypeButton(buttons[i]);
     }
-}
-
-function updateSingleTypeButton(button) {
-    let typeName = button.dataset.type;
-    button.classList.toggle("active", selectedTypes.includes(typeName));
-}
-
-function hasSelectedType(pokemon) {
-    if (selectedTypes.length === 0) return true;
-    let pokemonTypes = getPokemonTypeNames(pokemon);
-    return selectedTypes.some(type => pokemonTypes.includes(type));
-}
-
-function getPokemonTypeNames(pokemon) {
-    return pokemon.types.map(typeSlot => typeSlot.type.name);
-}
