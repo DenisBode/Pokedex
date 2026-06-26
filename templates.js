@@ -57,7 +57,7 @@ function getTypeFilterButtonTemplate(typeName) {
 function getNotFoundTemplate() {
     return `
         <p class="not-found" data-id="not-found">
-            No matching PokÃ©mon found.
+            No matching Pokémon found.
         </p>
     `;
 }
@@ -69,7 +69,9 @@ function getPokemonDetailCardTemplate(pokemon, activeTab = "about", evolutionNam
             ${getPokemonDetailHeaderTemplate(pokemon)}
             ${getPokemonDetailImageTemplate(pokemon)}
             ${getPokemonDetailTabsTemplate(pokemon, activeTab)}
-            ${getPokemonDetailContentTemplate(pokemon, activeTab, evolutionNames)}
+            <div data-id="tab-content">
+                ${getPokemonDetailContentTemplate(pokemon, activeTab, evolutionNames)}
+            </div>
         </article>
     `;
 }
@@ -125,7 +127,7 @@ function getPokemonDetailTabsTemplate(pokemon, activeTab) {
 }
 function getDetailTabButtonTemplate(pokemonId, tabName, activeTab) {
     return `
-        <button class="detail-tab ${getActiveTabClass(tabName, activeTab)}" onclick="switchDetailTab(${pokemonId}, '${tabName}')">
+        <button class="detail-tab ${getActiveTabClass(tabName, activeTab)}" data-tab="${tabName}" onclick="switchDetailTab(${pokemonId}, '${tabName}')">
             ${capitalizeWords(tabName)}
         </button>
     `;

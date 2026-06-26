@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PokÃ©dex</title>
+    <title>Pokédex</title>
     <link rel="icon" href="./assets/pokeball.svg" type="image/svg+xml">
     <link rel="stylesheet" href="./style.css">
     <link rel="stylesheet" href="./styles/standard.css">
@@ -15,12 +15,12 @@
 <body onload="init()">
     <header>
         <div class="header-title">
-            <img class="header-logo" src="./assets/pokeball.svg" alt="PokÃ©dex logo">
-            <h1>PokÃ©dex</h1>
+            <img class="header-logo" src="./assets/pokeball.svg" alt="Pokédex logo">
+            <h1>Pokédex</h1>
         </div>
         <div class="search-wrapper">
             <div class="search-field">
-                <input data-id="search-input" id="searchInput" type="text" placeholder="Search PokÃ©mon...">
+                <input data-id="search-input" id="searchInput" type="text" placeholder="Search Pokémon...">
                 <button id="clearSearchButton" class="clear-search-button" type="button" aria-label="Clear search">
                     x
                 </button>
@@ -53,6 +53,8 @@
     </footer>
     <dialog data-id="dialog" id="pokemonDialog"></dialog>
     <script src="./templates.js"></script>
+    <script src="./scripts/search.js"></script>
+    <script src="./scripts/filter.js"></script>
     <script src="./script.js"></script>
 </body>
 </html>
