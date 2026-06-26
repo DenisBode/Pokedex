@@ -32,11 +32,16 @@ async function loadPokemonList() {
     if (isLoading) return;
     isLoading = true;
     setLoadMoreButton(true);
-    let response = await fetch(getPokemonListUrl());
-    let data = await response.json();
-    await loadPokemonDetails(data.results);
-    setLoadMoreButton(false);
-    isLoading = false;
+    try {
+        let response = await fetch(getPokemonListUrl());
+        let data = await response.json();
+        await loadPokemonDetails(data.results);
+    } catch (error) {
+        renderError("Failed to load Pokémon. Please try again.");
+    } finally {
+        setLoadMoreButton(false);
+        isLoading = false;
+    }
 }
 
 // Routes to loadMoreTypeFilterPokemon when a type filter is active
@@ -45,14 +50,14 @@ async function loadMorePokemon() {
     return loadPokemonList();
 }
 
-function setLoadMoreButton(isLoading) {
+function setLoadMoreButton(loading) {
     let button = document.getElementById("loadMoreButton");
-    button.disabled = isLoading || shouldHideLoadMore();
-    button.innerHTML = getLoadingButtonContent(isLoading);
+    button.disabled = loading || isLoadMoreExhausted();
+    button.innerHTML = getLoadingButtonContent(loading);
 }
 
-function getLoadingButtonContent(isLoading) {
-    if (!isLoading) return "Load more";
+function getLoadingButtonContent(loading) {
+    if (!loading) return "Load more";
     return `<span class="button-loader"></span>Loading...`;
 }
 
@@ -70,11 +75,15 @@ async function loadPokemonDetails(pokemonList) {
 }
 
 async function loadSinglePokemon(url) {
-    let response = await fetch(url);
-    let pokemon = await response.json();
-    loadedPokemon.push(pokemon);
-    updateMaxStatsCacheFromApi(pokemon);
-    preloadPokemonImage(pokemon);
+    try {
+        let response = await fetch(url);
+        let pokemon = await response.json();
+        loadedPokemon.push(pokemon);
+        updateMaxStatsCacheFromApi(pokemon);
+        preloadPokemonImage(pokemon);
+    } catch (error) {
+        renderError("A Pokémon could not be loaded.");
+    }
 }
 
 function preloadPokemonImage(pokemon) {
@@ -104,6 +113,10 @@ function getStatBarPercent(stat) {
     return Math.min(stat.base_stat / getCachedMaxStat(stat.stat.name) * 100, 100);
 }
 
+function renderError(message) {
+    document.getElementById("pokedex").innerHTML = `<p class="not-found">${message}</p>`;
+}
+
 function renderPokemonCard(pokemon) {
     let pokedex = document.getElementById("pokedex");
     pokedex.innerHTML += getPokemonCardTemplate(pokemon);
@@ -123,16 +136,16 @@ function renderPokemonCards(pokemonList) {
 
 function renderCurrentPokemon() {
     renderPokemonCards(getVisiblePokemon());
-    updateLoadMoreButtonVisibility();
+    updateLoadMoreState();
 }
 
-function updateLoadMoreButtonVisibility() {
+function updateLoadMoreState() {
     document.querySelector(".load-more-wrapper").hidden = false;
-    document.getElementById("loadMoreButton").disabled = shouldHideLoadMore();
+    document.getElementById("loadMoreButton").disabled = isLoadMoreExhausted();
 }
 
-// Hides Load More when search results are below the page size, or all type-filter URLs are loaded
-function shouldHideLoadMore() {
+// Returns true when no further loading would change the visible result
+function isLoadMoreExhausted() {
     if (currentSearch !== "") return getVisiblePokemon().length < pokemonLimit;
     if (selectedTypes.length === 0) return false;
     return typeFilterUrls.every(url => isPokemonLoaded(getIdFromUrl(url)));
