@@ -23,6 +23,18 @@ function getPokemonDetailImageUrl(pokemon) {
     return pokemon.sprites.other["official-artwork"].front_default || pokemon.sprites.front_default;
 }
 
+function formatHeight(pokemon) {
+    return pokemon.height / 10 + " m";
+}
+
+function formatWeight(pokemon) {
+    return pokemon.weight / 10 + " kg";
+}
+
+function formatAbilities(abilities) {
+    return abilities.map(a => capitalizeWords(a.ability.name)).join(", ");
+}
+
 function init() {
     initButtons();
     loadPokemonTypes();
@@ -274,10 +286,4 @@ function showPreviousPokemon() {
     showPokemonByStep(-1);
 }
 
-// Advances dialog by step, wraps around at both ends of the visible list
-function showPokemonByStep(step) {
-    let pokemonList = getVisiblePokemon();
-    activeDetailTab = "about";
-    currentDialogIndex = (currentDialogIndex + step + pokemonList.length) % pokemonList.length;
-    renderPokemonDialog(pokemonList[currentDialogIndex]);
-}
+// Advances dialog by step, wraps around at both ends of the visible lis

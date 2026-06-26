@@ -146,8 +146,8 @@ function getPokemonAboutTemplate(pokemon) {
 function getPokemonDetailFactsTemplate(pokemon) {
     return `
         <div class="pokemon-detail-info">
-            ${getPokemonDetailInfoTemplate("Height", pokemon.height / 10 + " m")}
-            ${getPokemonDetailInfoTemplate("Weight", pokemon.weight / 10 + " kg")}
+            ${getPokemonDetailInfoTemplate("Height", formatHeight(pokemon))}
+            ${getPokemonDetailInfoTemplate("Weight", formatWeight(pokemon))}
         </div>
     `;
 }
@@ -156,7 +156,7 @@ function getPokemonAbilitiesSectionTemplate(pokemon) {
     return `
         <section class="pokemon-detail-section">
             <h3>Abilities</h3>
-            <p>${getPokemonAbilitiesTemplate(pokemon.abilities)}</p>
+            <p>${formatAbilities(pokemon.abilities)}</p>
         </section>
     `;
 }
@@ -179,11 +179,6 @@ function getPokemonDetailInfoTemplate(label, value) {
     `;
 }
 
-function getPokemonAbilitiesTemplate(abilities) {
-    return abilities
-        .map(ability => capitalizeWords(ability.ability.name))
-        .join(", ");
-}
 
 function getPokemonEvolutionTemplate(evolutionNames) {
     return `
