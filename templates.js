@@ -130,18 +130,6 @@ function getDetailTabButtonTemplate(pokemonId, tabName, activeTab) {
         </button>
     `;
 }
-function getActiveTabClass(tabName, activeTab) {
-    return tabName === activeTab ? "active" : "";
-}
-function getPokemonDetailContentTemplate(pokemon, activeTab, evolutionNames) {
-    if (activeTab === "evolution") {
-        return getPokemonEvolutionTemplate(evolutionNames);
-    }
-    if (activeTab === "moves") {
-        return getPokemonMovesTemplate(pokemon);
-    }
-    return activeTab === "base-stats" ? getPokemonStatsSectionTemplate(pokemon) : getPokemonAboutTemplate(pokemon);
-}
 function getPokemonAboutTemplate(pokemon) {
     return `
         ${getPokemonDetailFactsTemplate(pokemon)}
@@ -186,9 +174,6 @@ function getPokemonAbilitiesTemplate(abilities) {
         .join(", ");
 }
 function getPokemonEvolutionTemplate(evolutionNames) {
-    if (evolutionNames.length === 0) {
-        return getDetailLoadingTemplate();
-    }
     return `
         <section class="pokemon-detail-section">
             <h3>Evolution</h3>

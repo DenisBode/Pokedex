@@ -15,7 +15,6 @@ let evolutionCache = {};
  * Called by onload="init()" in index.html.
  */
 function init() {
-    console.log("App started");
     initButtons();
     loadPokemonTypes();
     loadPokemonList();
@@ -39,10 +38,8 @@ async function loadPokemonList() {
     }
     isLoading = true;
     setLoadMoreButton(true);
-    console.log("Loading Pokemon from offset:", currentOffset);
     let response = await fetch(getPokemonListUrl());
     let data = await response.json();
-    console.log("Loaded Pokemon list:", data.results);
     await loadPokemonDetails(data.results);
     setLoadMoreButton(false);
     isLoading = false;
@@ -90,7 +87,6 @@ async function loadSinglePokemon(url) {
     loadedPokemon.push(pokemon);
     updateMaxStatsCacheFromApi(pokemon);
     preloadPokemonImage(pokemon);
-    console.log("Loaded Pokemon:", pokemon.name);
 }
 function preloadPokemonImage(pokemon) {
     let image = new Image();
@@ -140,7 +136,6 @@ async function loadPokemonTypes() {
     let response = await fetch(BASE_URL + "type");
     let data = await response.json();
     let types = getValidTypes(data.results);
-    console.log("Available types:", types);
     renderTypeFilter(types);
 }
 /**
@@ -181,16 +176,42 @@ function removeSelectedType(typeName) {
 /**
  * Updates filter buttons and the Pokemon list.
  */
-function updateTypeFilter() {
+async function updateTypeFilter() {
     updateTypeButtonStyles();
-    renderCurrentPokemon();
-    console.log("Active types:", selectedTypes);
+    updateLoadMoreButtonVisibility();
+    if (selectedTypes.length > 0) {
+        await loadPokemonForSelectedTypes();
+    } else {
+        renderCurrentPokemon();
+    }
 }
-/**
- * Renders only matching Pokemon.
- */
-function renderFilteredPokemon() {
+async function loadPokemonForSelectedTypes() {
+    if (isLoading) return;
+    isLoading = true;
+    let urls = await getAllUrlsForSelectedTypes();
+    let missingUrls = urls.filter(url => !isPokemonLoaded(getIdFromUrl(url)));
+    for (let i = 0; i < missingUrls.length; i++) {
+        await loadSinglePokemon(missingUrls[i]);
+    }
+    isLoading = false;
     renderCurrentPokemon();
+}
+async function getAllUrlsForSelectedTypes() {
+    let urlSets = await Promise.all(selectedTypes.map(fetchTypeUrls));
+    let allUrls = urlSets.flat();
+    return [...new Set(allUrls)];
+}
+async function fetchTypeUrls(typeName) {
+    let response = await fetch(BASE_URL + "type/" + typeName);
+    let data = await response.json();
+    return data.pokemon.map(entry => entry.pokemon.url);
+}
+function isPokemonLoaded(id) {
+    return loadedPokemon.some(p => p.id === id);
+}
+function getIdFromUrl(url) {
+    let parts = url.split("/").filter(Boolean);
+    return parseInt(parts[parts.length - 1]);
 }
 function renderCurrentPokemon() {
     renderPokemonCards(getVisiblePokemon());
@@ -276,6 +297,20 @@ function openPokemonDialog(pokemonId) {
     renderPokemonDialog(pokemon);
     document.body.classList.add("dialog-open");
     dialog.showModal();
+}
+function getActiveTabClass(tabName, activeTab) {
+    return tabName === activeTab ? "active" : "";
+}
+function getPokemonDetailContentTemplate(pokemon, activeTab, evolutionNames) {
+    if (activeTab === "evolution") {
+        return evolutionNames.length === 0
+            ? getDetailLoadingTemplate()
+            : getPokemonEvolutionTemplate(evolutionNames);
+    }
+    if (activeTab === "moves") return getPokemonMovesTemplate(pokemon);
+    return activeTab === "base-stats"
+        ? getPokemonStatsSectionTemplate(pokemon)
+        : getPokemonAboutTemplate(pokemon);
 }
 function renderPokemonDialog(pokemon, evolutionNames = []) {
     document.getElementById("pokemonDialog").innerHTML =
